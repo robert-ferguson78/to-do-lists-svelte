@@ -1,13 +1,47 @@
 <script>
   let todoText = "";
-  let todoItems = [];  
+  let todoItems = [];
+  let doneItems = [];
+
+  function uuidv4() {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0, v = c == "x" ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
 
   function addTodo() {
-    console.log(todoText);
-    todoItems.push(todoText);
+    const todo = {
+      text: todoText,
+      date: new Date().toLocaleString("en-IE"),
+    };
+    todoItems.push(todo);
     todoItems = [...todoItems];
     todoText = "";
   }
+
+  const todo = {
+    text: todoText,
+    date: new Date().toLocaleString("en-IE"),
+    id: uuidv4()
+  };
+
+  function markTodo(id) {
+    const found = todoItems.findIndex((todo) => todo.id == id);
+    const done = todoItems[found];
+    todoItems.splice(found, 1);
+    todoItems = [...todoItems];
+    doneItems.push(done);
+    doneItems = [...doneItems];
+  }
+
+  function deleteTodo(id) {
+    const found = doneItems.findIndex((todo) => todo.id == id);
+    const done = doneItems[found];
+    doneItems.splice(found, 1);
+    doneItems = [...doneItems];
+  }
+
 </script>
 
 
@@ -35,13 +69,41 @@
     <div class="title is-6">Things yet do</div>
     <table class="table is-fullwidth">
       <thead>
-        {#each todoItems as todo}
-          <tr>
-            <td> {todo} </td>
-          </tr>
-        {/each}
+        <th>Task</th>
+        <th>Date</th>
+        <th>Action</th>
       </thead>
       <tbody>
+        {#each todoItems as todo}
+          <tr>
+            <td> {todo.text} </td>
+            <td> {todo.date} </td>
+            <td>
+              <button on:click={markTodo(todo.id)} class="button">Mark Done</button>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
+  <div class="section box">
+    <div class="title is-6">Things Done</div>
+    <table class="table is-fullwidth">
+      <thead>
+        <th>Task</th>
+        <th>Date</th>
+        <th>Action</th>
+      </thead>
+      <tbody>
+        {#each doneItems as todo}
+          <tr>
+            <td> {todo.text} </td>
+            <td> {todo.date} </td>
+            <td>
+              <button on:click={deleteTodo(todo.id)} class="button">Delete</button>
+            </td>
+          </tr>
+        {/each}
       </tbody>
     </table>
   </div>
